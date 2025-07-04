@@ -18,8 +18,6 @@
   },
   "dependencies": {
     "@commitlint/config-conventional": "^19.8.1",
-    "@commitlint/lint": "^19.8.1",
-    "@commitlint/load": "^19.8.1",
     "probot": "^13.4.5"
   },
   "devDependencies": {

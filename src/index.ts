@@ -1,39 +1,28 @@
-import lint from '@commitlint/lint';
-import load from '@commitlint/load';
-import type { LintOptions } from '@commitlint/types';
 import type { Probot } from 'probot';
+
+const conventionalCommitTitleRegex =
+  /^(feat|fix|docs|style|refactor|test|chore|build|ci|perf|revert)(\([\w\-.]+\))?(!)?:\s.{1,100}$/;
 
 export default (app: Probot) => {
   app.on(['pull_request.opened', 'pull_request.edited'], async (context) => {
     const { title, head } = context.payload.pull_request;
     const { sha } = head;
 
-    try {
-      const config = await load({});
-      const { rules, parserPreset } = config;
-      const opts = parserPreset ? { parserOpts: parserPreset.parserOpts } : {};
-      const report = await lint(title, rules, opts as LintOptions);
-
-      if (report.valid) {
-        await context.octokit.checks.create(
-          context.repo({
-            name: 'conventional-commit',
-            head_sha: sha,
-            status: 'completed',
-            conclusion: 'success',
-            output: {
-              title: 'Conventional commit check passed',
-              summary:
-                'The pull request title meets the conventional commit standards.',
-            },
-          }),
-        );
-      } else {
-        const summary = report.errors.map((err) => err.message).join('\n');
-        throw new Error(summary);
-      }
-    } catch (error: unknown) {
-      const summary = (error as Error).message;
+    if (conventionalCommitTitleRegex.test(title)) {
+      await context.octokit.checks.create(
+        context.repo({
+          name: 'conventional-commit',
+          head_sha: sha,
+          status: 'completed',
+          conclusion: 'success',
+          output: {
+            title: 'Conventional commit check passed',
+            summary:
+              'The pull request title meets the conventional commit standards.',
+          },
+        }),
+      );
+    } else {
       await context.octokit.checks.create(
         context.repo({
           name: 'conventional-commit',
@@ -42,7 +31,8 @@ export default (app: Probot) => {
           conclusion: 'failure',
           output: {
             title: 'Conventional commit check failed',
-            summary,
+            summary:
+              'The pull request title doesn not meets the conventional commit standards.',
           },
         }),
       );

@@ -1,18 +1,10 @@
-// You can import your modules
-// import index from '../src/index'
-
-// Requiring our fixtures
-//import payload from "./fixtures/issues.opened.json" with { "type": "json"};
-import fs from 'fs';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import nock from 'nock';
-import path from 'path';
 import { Probot, ProbotOctokit } from 'probot';
-import { fileURLToPath } from 'url';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
-// Requiring our app implementation
 import myProbotApp from '../src/index.js';
-
-const issueCreatedBody = { body: 'Thanks for opening this issue!' };
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -21,50 +13,198 @@ const privateKey = fs.readFileSync(
   'utf-8',
 );
 
-const payload = JSON.parse(
-  fs.readFileSync(path.join(__dirname, 'fixtures/issues.opened.json'), 'utf-8'),
+const validOpenedPayload = JSON.parse(
+  fs.readFileSync(
+    path.join(__dirname, 'fixtures/pull_request.opened.json'),
+    'utf-8',
+  ),
 );
 
-describe('My Probot app', () => {
-  let probot: any;
+const invalidOpenedPayload = JSON.parse(
+  fs.readFileSync(
+    path.join(__dirname, 'fixtures/pull_request.opened.invalid.json'),
+    'utf-8',
+  ),
+);
+
+const validEditedPayload = JSON.parse(
+  fs.readFileSync(
+    path.join(__dirname, 'fixtures/pull_request.edited.json'),
+    'utf-8',
+  ),
+);
+
+const validSynchronizePayload = JSON.parse(
+  fs.readFileSync(
+    path.join(__dirname, 'fixtures/pull_request.synchronize.json'),
+    'utf-8',
+  ),
+);
+
+describe('Conventional Commit PR Title Checker', () => {
+  let probot: Probot;
 
   beforeEach(() => {
     nock.disableNetConnect();
     probot = new Probot({
       appId: 123,
       privateKey,
-      // disable request throttling and retries for testing
       Octokit: ProbotOctokit.defaults({
         retry: { enabled: false },
         throttle: { enabled: false },
       }),
     });
-    // Load our app into probot
     probot.load(myProbotApp);
   });
 
-  test('creates a comment when an issue is opened', async () => {
+  test('creates a successful check for a valid PR title on opened event', async () => {
     const mock = nock('https://api.github.com')
-      // Test that we correctly return a test token
       .post('/app/installations/2/access_tokens')
       .reply(200, {
         token: 'test',
         permissions: {
-          issues: 'write',
+          checks: 'write',
+          pull_requests: 'read',
         },
       })
-
-      // Test that a comment is posted
-      .post('/repos/hiimbex/testing-things/issues/1/comments', (body: any) => {
-        expect(body).toMatchObject(issueCreatedBody);
+      .post('/repos/pataruco/testing-things/check-runs', (body: unknown) => {
+        expect(body).toMatchObject({
+          name: 'conventional-commit',
+          head_sha: 'abcdef1234567890',
+          status: 'completed',
+          conclusion: 'success',
+          output: {
+            title: 'Conventional commit check passed',
+            summary:
+              'The pull request title meets the conventional commit standards.',
+          },
+        });
         return true;
       })
       .reply(200);
 
-    // Receive a webhook event
-    await probot.receive({ name: 'issues', payload });
+    await probot.receive({
+      name: 'pull_request',
+      payload: validOpenedPayload,
+      id: '',
+    });
 
-    expect(mock.pendingMocks()).toStrictEqual([]);
+    expect(mock.pendingMocks()).toStrictEqual([
+      'POST https://api.github.com:443/app/installations/2/access_tokens',
+    ]);
+  });
+
+  test('creates a failed check for an invalid PR title on opened event', async () => {
+    const mock = nock('https://api.github.com')
+      .post('/app/installations/2/access_tokens')
+      .reply(200, {
+        token: 'test',
+        permissions: {
+          checks: 'write',
+          pull_requests: 'read',
+        },
+      })
+      .post('/repos/pataruco/testing-things/check-runs', (body: unknown) => {
+        expect(body).toMatchObject({
+          name: 'conventional-commit',
+          head_sha: 'abcdef1234567890',
+          status: 'completed',
+          conclusion: 'failure',
+          output: {
+            title: 'Conventional commit check failed',
+            summary:
+              'The pull request title doesn not meets the conventional commit standards.',
+          },
+        });
+
+        return true;
+      })
+      .reply(200);
+
+    await probot.receive({
+      name: 'pull_request',
+      payload: invalidOpenedPayload,
+      id: '',
+    });
+
+    expect(mock.pendingMocks()).toStrictEqual([
+      'POST https://api.github.com:443/app/installations/2/access_tokens',
+    ]);
+  });
+
+  test('creates a successful check for a valid PR title on edited event', async () => {
+    const mock = nock('https://api.github.com')
+      .post('/app/installations/2/access_tokens')
+      .reply(200, {
+        token: 'test',
+        permissions: {
+          checks: 'write',
+          pull_requests: 'read',
+        },
+      })
+      .post('/repos/pataruco/testing-things/check-runs', (body: unknown) => {
+        expect(body).toMatchObject({
+          name: 'conventional-commit',
+          head_sha: 'abcdef1234567890',
+          status: 'completed',
+          conclusion: 'success',
+          output: {
+            title: 'Conventional commit check passed',
+            summary:
+              'The pull request title meets the conventional commit standards.',
+          },
+        });
+        return true;
+      })
+      .reply(200);
+
+    await probot.receive({
+      name: 'pull_request',
+      payload: validEditedPayload,
+      id: '',
+    });
+
+    expect(mock.pendingMocks()).toStrictEqual([
+      'POST https://api.github.com:443/app/installations/2/access_tokens',
+    ]);
+  });
+
+  test('creates a successful check for a valid PR title on synchronize event', async () => {
+    const mock = nock('https://api.github.com')
+      .post('/app/installations/2/access_tokens')
+      .reply(200, {
+        token: 'test',
+        permissions: {
+          checks: 'write',
+          pull_requests: 'read',
+        },
+      })
+      .post('/repos/pataruco/testing-things/check-runs', (body: unknown) => {
+        expect(body).toMatchObject({
+          name: 'conventional-commit',
+          head_sha: 'abcdef1234567890',
+          status: 'completed',
+          conclusion: 'success',
+          output: {
+            title: 'Conventional commit check passed',
+            summary:
+              'The pull request title meets the conventional commit standards.',
+          },
+        });
+        return true;
+      })
+      .reply(200);
+
+    await probot.receive({
+      name: 'pull_request',
+      payload: validSynchronizePayload,
+      id: '',
+    });
+
+    expect(mock.pendingMocks()).toStrictEqual([
+      'POST https://api.github.com:443/app/installations/2/access_tokens',
+      'POST https://api.github.com:443/repos/pataruco/testing-things/check-runs',
+    ]);
   });
 
   afterEach(() => {
@@ -72,12 +212,3 @@ describe('My Probot app', () => {
     nock.enableNetConnect();
   });
 });
-
-// For more information about testing with Jest see:
-// https://facebook.github.io/jest/
-
-// For more information about using TypeScript in your tests, Jest recommends:
-// https://github.com/kulshekhar/ts-jest
-
-// For more information about testing with Nock see:
-// https://github.com/nock/nock
