@@ -1,8 +1,9 @@
-FROM node:20-slim
+FROM node:22-slim
 WORKDIR /usr/src/app
-COPY package.json package-lock.json ./
-RUN npm ci --production
-RUN npm cache clean --force
+COPY package.json pnpm-lock.yaml ./
+RUN corepack enable
+RUN corepack prepare pnpm@latest --activate
+RUN pnpm i --frozen-lockfile
 ENV NODE_ENV="production"
 COPY . .
-CMD [ "npm", "start" ]
+CMD [ "pnpm", "start" ]

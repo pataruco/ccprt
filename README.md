@@ -1,15 +1,15 @@
 # ccprt
 
-> A GitHub App built with [Probot](https://github.com/probot/probot) that checks pr follows conventional commits conventions
+A GitHub App built with [Probot](https://github.com/probot/probot) that checks pr titles follows conventional commits conventions
 
 ## Setup
 
 ```sh
 # Install dependencies
-npm install
+pnpm install
 
 # Run the bot
-npm start
+pnpm start
 ```
 
 ## Docker
@@ -21,13 +21,3 @@ docker build -t ccprt .
 # 2. Start container
 docker run -e APP_ID=<app-id> -e PRIVATE_KEY=<pem-value> ccprt
 ```
-
-## Contributing
-
-If you have suggestions for how ccprt could be improved, or want to report a bug, open an issue! We'd love all and any contributions.
-
-For more, check out the [Contributing Guide](CONTRIBUTING.md).
-
-## License
-
-[ISC](LICENSE) © 2025 Pedro Martin
