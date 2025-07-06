@@ -7,3 +7,5 @@ coverage
 lib
 secrets.env
 *.js
+*.js.map
+*.d.ts
