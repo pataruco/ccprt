@@ -12,22 +12,23 @@
 	],
 	"scripts": {
 		"build": "tsc",
-		"start": "probot run ./lib/index.js",
+		"start": "probot run ./lib/app.js",
 		"test": "vitest",
 		"lint": "pnpm exec biome check"
 	},
 	"dependencies": {
+		"@google-cloud/functions-framework": "^4.0.0",
 		"probot": "^13.4.5"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.0.6",
 		"@commitlint/cli": "^19.8.1",
 		"@commitlint/config-conventional": "^19.8.1",
-		"@types/node": "^20.0.0",
+		"@types/node": "^24.0.10",
 		"nock": "^14.0.5",
-		"smee-client": "^2.0.0",
+		"smee-client": "^4.3.1",
 		"typescript": "^5.8.3",
-		"vitest": "^2.0.0"
+		"vitest": "^3.2.4"
 	},
 	"overrides": {
 		"@types/pg": "8.15.1"

@@ -5,4 +5,7 @@ npm-debug.log
 .env
 coverage
 lib
-.env-source
+secrets.env
+*.js
+*.js.map
+*.d.ts

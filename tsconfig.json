@@ -5,7 +5,7 @@
 		"module": "Node16",
 		"declaration": true,
 		"sourceMap": true,
-		"outDir": "./lib",
+		"outDir": "./",
 
 		/* Strict Type-Checking Options */
 		"strict": true,
@@ -20,6 +20,7 @@
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true
 	},
-	"include": ["src/"],
-	"compileOnSave": false
+	"include": ["./src"],
+	"compileOnSave": false,
+	"exclude": ["node_modules", "test"]
 }

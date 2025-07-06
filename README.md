@@ -12,6 +12,8 @@ pnpm install
 pnpm start
 ```
 
+For SOPS operations follow this [GitHub Gist](https://gist.github.com/pataruco/32d30588688c83b2d879ac06b3a5fe7e)
+
 ## Tooling
 
 ### Tests
