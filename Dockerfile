@@ -8,7 +8,6 @@ COPY package.json pnpm-lock.yaml ./
 RUN corepack enable
 RUN corepack prepare pnpm@latest --activate
 RUN pnpm i --frozen-lockfile
-# RUN pnpm build
 ENV NODE_ENV="production"
 COPY . .
 CMD [ "pnpm", "start" ]

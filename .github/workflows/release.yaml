@@ -1,0 +1,51 @@
+name: Create a release 🚀
+run-name: ${{ github.actor }} is releasing a new version
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  prepare:
+    name: Prepare
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛎️ Checkout
+        uses: actions/checkout@v4
+
+      - name: 🧰 Prepare tooling
+        uses: ./.github/actions/prepare
+
+  conventional-commits:
+    needs: prepare
+    name: Conventional Commits
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛎️ Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🧰 Prepare tooling
+        uses: ./.github/actions/prepare
+
+      - name: Conventional Commits
+        uses: ./.github/actions/conventional-commits
+
+  release-please:
+    runs-on: ubuntu-latest
+    needs: [conventional-commits, prepare]
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          token: ${{ secrets.RELEASE_PLEASE_GH_TOKEN }}
+          release-type: node
