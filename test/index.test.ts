@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import nock from "nock";
 import { Probot, ProbotOctokit } from "probot";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
-import myProbotApp from "../src/index.js";
+import myProbotApp from "../src/app.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
