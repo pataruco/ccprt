@@ -1,0 +1,74 @@
+name: Services PR validation
+run-name: ${{ github.actor }} is running PR validation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+  merge_group:
+    types: [checks_requested]
+
+permissions:
+  actions: read
+  contents: write
+  pull-requests: write
+
+concurrency:
+  cancel-in-progress: true
+  group: '${{ github.workflow }} @ ${{ github.ref }}'
+
+jobs:
+  prepare:
+    name: Prepare
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛎️ Checkout
+        uses: actions/checkout@v4
+
+      - name: 🧰 Prepare tooling
+        uses: ./.github/actions/prepare
+
+  conventional-commits:
+    needs: prepare
+    name: Conventional Commits
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛎️ Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🧰 Prepare tooling
+        uses: ./.github/actions/prepare
+
+      - name: Conventional Commits
+        uses: ./.github/actions/conventional-commits
+
+  lint:
+    needs: prepare
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛎️ Checkout
+        uses: actions/checkout@v4
+
+      - name: 🧰 Prepare monorepo tooling
+        uses: ./.github/actions/prepare
+
+      - name: 🧹 Lint
+        run: pnpm lint
+
+  test:
+    needs: prepare
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛎️ Checkout
+        uses: actions/checkout@v4
+
+      - name: 🧰 Prepare tooling
+        uses: ./.github/actions/prepare
+
+      - name: 🧪 Test
+        run: pnpm test

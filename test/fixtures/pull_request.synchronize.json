@@ -1,15 +1,15 @@
 {
-  "action": "synchronize",
-  "pull_request": {
-    "title": "feat: A synchronized feature",
-    "head": {
-      "sha": "abcdef1234567890"
-    }
-  },
-  "repository": {
-    "name": "testing-things",
-    "owner": {
-      "login": "pataruco"
-    }
-  }
+	"action": "synchronize",
+	"pull_request": {
+		"title": "feat: A synchronized feature",
+		"head": {
+			"sha": "abcdef1234567890"
+		}
+	},
+	"repository": {
+		"name": "testing-things",
+		"owner": {
+			"login": "pataruco"
+		}
+	}
 }

@@ -1,15 +1,15 @@
 {
-  "action": "opened",
-  "pull_request": {
-    "title": "feat: A new feature",
-    "head": {
-      "sha": "abcdef1234567890"
-    }
-  },
-  "repository": {
-    "name": "testing-things",
-    "owner": {
-      "login": "pataruco"
-    }
-  }
+	"action": "opened",
+	"pull_request": {
+		"title": "feat: A new feature",
+		"head": {
+			"sha": "abcdef1234567890"
+		}
+	},
+	"repository": {
+		"name": "testing-things",
+		"owner": {
+			"login": "pataruco"
+		}
+	}
 }

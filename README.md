@@ -12,6 +12,20 @@ pnpm install
 pnpm start
 ```
 
+## Tooling
+
+### Tests
+
+```sh
+pnpm test
+```
+
+### Lint
+
+```sh
+pnpm lint
+```
+
 ## Docker
 
 ```sh

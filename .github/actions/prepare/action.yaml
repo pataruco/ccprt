@@ -1,0 +1,18 @@
+name: Prepare tooling for GitHub runners
+description: Set Node and
+
+runs:
+  using: composite
+  steps:
+    - uses: pnpm/action-setup@v4
+      with:
+        run_install: false
+
+    - uses: actions/setup-node@v4
+      with:
+        node-version-file: './.nvmrc'
+        cache: pnpm
+
+    - name: Install Node dependencies 📦
+      shell: bash
+      run: pnpm install

@@ -1,15 +1,15 @@
 {
-  "action": "edited",
-  "pull_request": {
-    "title": "feat: An edited feature",
-    "head": {
-      "sha": "abcdef1234567890"
-    }
-  },
-  "repository": {
-    "name": "testing-things",
-    "owner": {
-      "login": "pataruco"
-    }
-  }
+	"action": "edited",
+	"pull_request": {
+		"title": "feat: An edited feature",
+		"head": {
+			"sha": "abcdef1234567890"
+		}
+	},
+	"repository": {
+		"name": "testing-things",
+		"owner": {
+			"login": "pataruco"
+		}
+	}
 }
