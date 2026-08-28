@@ -19,7 +19,9 @@ impl Config {
             app_id: required("APP_ID")?
                 .parse()
                 .map_err(|_| "APP_ID must be a number".to_string())?,
-            private_key: required("PRIVATE_KEY")?,
+            // Secret stores often hold the PEM as a single line with literal
+            // `\n` escapes (Probot normalized these too).
+            private_key: required("PRIVATE_KEY")?.replace("\\n", "\n"),
             webhook_secret: required("WEBHOOK_SECRET")?,
             port: get("PORT")
                 .unwrap_or_else(|| "8080".to_string())
@@ -86,5 +88,33 @@ mod tests {
             ("WEBHOOK_SECRET", "s"),
         ]);
         assert!(Config::from_lookup(lookup(&map)).is_err());
+    }
+
+    #[test]
+    fn private_key_escaped_newlines_are_normalized() {
+        let map = vars(&[
+            ("APP_ID", "1"),
+            (
+                "PRIVATE_KEY",
+                "-----BEGIN RSA PRIVATE KEY-----\\nabc\\ndef\\n-----END RSA PRIVATE KEY-----\\n",
+            ),
+            ("WEBHOOK_SECRET", "s"),
+        ]);
+        let config = Config::from_lookup(lookup(&map)).unwrap();
+        assert_eq!(
+            config.private_key,
+            "-----BEGIN RSA PRIVATE KEY-----\nabc\ndef\n-----END RSA PRIVATE KEY-----\n"
+        );
+    }
+
+    #[test]
+    fn private_key_with_real_newlines_is_unchanged() {
+        let pem = "-----BEGIN RSA PRIVATE KEY-----\nabc\n-----END RSA PRIVATE KEY-----\n";
+        let map = vars(&[
+            ("APP_ID", "1"),
+            ("PRIVATE_KEY", pem),
+            ("WEBHOOK_SECRET", "s"),
+        ]);
+        assert_eq!(Config::from_lookup(lookup(&map)).unwrap().private_key, pem);
     }
 }
