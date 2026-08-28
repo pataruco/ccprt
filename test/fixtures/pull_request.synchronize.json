@@ -1,5 +1,6 @@
 {
 	"action": "synchronize",
+	"number": 1,
 	"pull_request": {
 		"title": "feat: A synchronized feature",
 		"head": {
@@ -11,5 +12,6 @@
 		"owner": {
 			"login": "pataruco"
 		}
-	}
+	},
+	"installation": { "id": 12345 }
 }

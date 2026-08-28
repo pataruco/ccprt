@@ -1,11 +1,7 @@
-node_modules
-npm-debug.log
 *.pem
 !mock-cert.pem
-.env
-coverage
-lib
 secrets.env
-*.js
-*.js.map
-*.d.ts
+target/
+.env
+.superpowers
+docs/superpowers
