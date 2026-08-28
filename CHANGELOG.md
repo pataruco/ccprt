@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.0](https://github.com/pataruco/ccprt/compare/v1.0.0...v1.1.0) (2026-08-28)
+
+
+### Features
+
+* rust ([9e8b482](https://github.com/pataruco/ccprt/commit/9e8b482135e5bfd61589a5838c7650b0630c764e))
+* rust ([8f13bd3](https://github.com/pataruco/ccprt/commit/8f13bd32bf009813ea0dd6649b654b737bba67d8))
+
 ## 1.0.0 (2025-07-06)
 
 
