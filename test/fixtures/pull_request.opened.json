@@ -1,5 +1,6 @@
 {
 	"action": "opened",
+	"number": 1,
 	"pull_request": {
 		"title": "feat: A new feature",
 		"head": {
@@ -11,5 +12,6 @@
 		"owner": {
 			"login": "pataruco"
 		}
-	}
+	},
+	"installation": { "id": 12345 }
 }
